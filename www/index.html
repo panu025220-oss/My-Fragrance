@@ -137,6 +137,9 @@ ul.why li.neg::before{content:'−';color:var(--bad)}
 .dots i.on{background:var(--accent)}
 .card .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:8px;flex-wrap:wrap}
 .card .acts{display:flex;gap:8px;margin-top:auto}
+details.sum{font-size:13px;border-top:1px dashed var(--line);padding-top:8px}
+details.sum summary{cursor:pointer;color:var(--accent);font-weight:500}
+details.sum p{margin-top:6px}
 a.fg{color:var(--accent);font-size:13px;text-decoration:underline;text-underline-offset:3px}
 .stars{color:var(--accent);letter-spacing:1px;font-size:13px}
 .empty{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:12px;background:var(--surface)}
@@ -221,18 +224,18 @@ var PARTS={morning:'เช้า',afternoon:'บ่าย',evening:'เย็น
 /* รายการน้ำหอมของผู้ใช้ + ข้อมูลจากหน้า Fragrantica (ดึงเมื่อ 11 ต.ค. 2026): [ชื่อ, แบรนด์, ความเข้มข้น, ขนาด, คงเหลือ%, กลุ่มกลิ่น, ความแรง, โอกาส, คะแนน Fragrantica, โน้ต, ลิงก์] */
 var FGB='https://www.fragrantica.com/perfume/';
 var PACK=[
- ['Mirto di Panarea','Acqua di Parma','EDT',100,100,['fresh','aquatic','green'],2,['office','cafe','outdoor'],4.11,'บน: Myrtle, Lemon, Bergamot, Basil · กลาง: Sea notes, Jasmine, Rose · ฐาน: Juniper, Cedar, Mastic, Amber',FGB+'Acqua-di-Parma/Acqua-di-parma-Blue-Mediterraneo-Mirto-di-Panarea-3108.html'],
- ['Bleu de Chanel','Chanel','EDT',100,100,['fresh','woody','spicy'],3,['office','meeting','cafe','date'],4.18,'บน: Grapefruit, Lemon, Mint, Pink pepper · กลาง: Ginger, Nutmeg, Jasmine · ฐาน: Incense, Cedar, Vetiver, Sandalwood, White musk',FGB+'Chanel/Bleu-de-Chanel-9099.html'],
- ['Absolu Aventus','Creed','Parfum',100,100,['fresh','spicy','woody'],4,['date','party','formal'],4.47,'บน: Pineapple, Black currant, Grapefruit, Pink pepper · กลาง: Cardamom, Cinnamon, Ginger · ฐาน: Vetiver, Patchouli',FGB+'Creed/Absolu-Aventus-106624.html'],
- ["La Nuit de l'Homme",'Yves Saint Laurent','EDT',100,100,['spicy','woody'],3,['date','party'],4.45,'บน: Cardamom · กลาง: Lavender, Virginia cedar, Bergamot · ฐาน: Vetiver, Caraway',FGB+'Yves-Saint-Laurent/La-Nuit-de-l-Homme-5521.html'],
- ["Angels' Share",'By Kilian','EDP',50,100,['gourmand','amber','spicy','woody'],4,['date','party','home'],4.35,'บน: Cognac · กลาง: Cinnamon, Tonka bean, Oak · ฐาน: Vanilla, Praline, Sandalwood, Candied almond',FGB+'By-Kilian/Angels-Share-62615.html'],
- ['Baccarat Rouge 540 Extrait de Parfum','Maison Francis Kurkdjian','Parfum',70,100,['amber','musk','woody'],5,['date','party','formal'],4.20,'บน: Bitter almond, Saffron · กลาง: Egyptian jasmine, Virginia cedar · ฐาน: Ambergris, Musk, Ambroxan, Cashmeran',FGB+'Maison-Francis-Kurkdjian/Baccarat-Rouge-540-Extrait-de-Parfum-46066.html'],
- ['Y Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','cafe','date'],4.41,'บน: Apple, Ginger, Bergamot · กลาง: Sage, Juniper berries, Geranium · ฐาน: Amberwood, Tonka bean, Cedar, Vetiver, Olibanum',FGB+'Yves-Saint-Laurent/Y-Eau-de-Parfum-50757.html'],
- ['MYSLF Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','floral','woody'],3,['office','meeting','cafe','date'],4.33,'บน: Calabrian bergamot · กลาง: Tunisian orange blossom · ฐาน: Ambrofix, Patchouli',FGB+'Yves-Saint-Laurent/MYSLF-Eau-de-Parfum-84094.html'],
- ['Apple Brandy on the Rocks','By Kilian','EDP',50,100,['gourmand','woody','fresh','spicy'],4,['cafe','date'],4.13,'บน: Cardamom, Bergamot · กลาง: Apple, Rum, Brandy, Pineapple, Vanilla, Moss · ฐาน: Cedar, Ambroxan',FGB+'By-Kilian/Apple-Brandy-on-the-Rocks-68326.html'],
- ['212 VIP Black','Carolina Herrera','EDP',100,100,['gourmand','musk','spicy'],4,['party','date'],4.29,'บน: Absinthe, Anise, Fennel · กลาง: Lavender · ฐาน: Black vanilla husk, Musk',FGB+'Carolina-Herrera/212-VIP-Black-46093.html'],
- ['Bleu de Chanel Eau de Parfum','Chanel','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','meeting','date','formal'],4.42,'บน: Grapefruit, Lemon, Mint, Bergamot, Pink pepper · กลาง: Ginger, Jasmine, Nutmeg · ฐาน: Incense, Amber, Cedar, Sandalwood, Patchouli',FGB+'Chanel/Bleu-de-Chanel-Eau-de-Parfum-25967.html'],
- ['Bleu de Chanel Parfum','Chanel','Parfum',100,100,['woody','fresh','amber'],4,['meeting','date','formal'],4.45,'บน: Lemon zest, Bergamot, Mint · กลาง: Lavender, Pineapple, Geranium · ฐาน: Sandalwood, Cedar, Amberwood, Tonka bean',FGB+'Chanel/Bleu-de-Chanel-Parfum-49912.html']
+ ['Mirto di Panarea','Acqua di Parma','EDT',100,100,['fresh','aquatic','green'],2,['office','cafe','outdoor'],4.11,'บน: Myrtle, Lemon, Bergamot, Basil · กลาง: Sea notes, Jasmine, Rose · ฐาน: Juniper, Cedar, Mastic, Amber',FGB+'Acqua-di-Parma/Acqua-di-parma-Blue-Mediterraneo-Mirto-di-Panarea-3108.html',3520,'สดชื่นแบบสมุนไพรกับซิตรัส มีกลิ่นสะอาดคล้ายสบู่และทะเลเล็กน้อย เหมาะกับอากาศร้อน ใส่ได้ทั้งชายและหญิง','ติดทนและฟุ้งน้อย ผ่านไปสองสามชั่วโมงก็เหลือกลิ่นบางๆ บนผิว บางคนว่าเรียบง่ายและราคาสูงไปหน่อย'],
+ ['Bleu de Chanel','Chanel','EDT',100,100,['fresh','woody','spicy'],3,['office','meeting','cafe','date'],4.18,'บน: Grapefruit, Lemon, Mint, Pink pepper · กลาง: Ginger, Nutmeg, Jasmine · ฐาน: Incense, Cedar, Vetiver, Sandalwood, White musk',FGB+'Chanel/Bleu-de-Chanel-9099.html',21372,'ซิตรัสเปิดสะอาด ฐานวู้ดดี้มีธูปบางๆ ใส่ได้หลายโอกาส เป็นขวดคลาสสิกที่มักได้รับคำชม','บางคนว่าเป็นกลิ่นที่เจอบ่อยและดูทั่วไป ความติดทนของ EDT ค่อนข้างสั้น'],
+ ['Absolu Aventus','Creed','Parfum',100,100,['fresh','spicy','woody'],4,['date','party','formal'],4.47,'บน: Pineapple, Black currant, Grapefruit, Pink pepper · กลาง: Cardamom, Cinnamon, Ginger · ฐาน: Vetiver, Patchouli',FGB+'Creed/Absolu-Aventus-106624.html',2005,'ผลไม้เปิดลื่นไหล ผสมกลมกลืน ใส่ได้หลายโอกาส ถือเป็นเวอร์ชันที่ขัดเกลาขึ้นของสไตล์ Aventus','ราคาสูง การฟุ้งและความติดทนไม่สม่ำเสมอ มีรายงานว่าแต่ละล็อตไม่เหมือนกัน และบางคนรู้สึกว่าคล้ายตัวทางเลือกราคาถูก'],
+ ["La Nuit de l'Homme",'Yves Saint Laurent','EDT',100,100,['spicy','woody'],3,['date','party'],4.45,'บน: Cardamom · กลาง: Lavender, Virginia cedar, Bergamot · ฐาน: Vetiver, Caraway',FGB+'Yves-Saint-Laurent/La-Nuit-de-l-Homme-5521.html',25144,'คาร์ดามอม ลาเวนเดอร์ ซีดาร์ ให้ความรู้สึกสง่า อบอุ่น มีเสน่ห์ หลายคนใช้เป็นกลิ่นประจำตัว','ติดทนและฟุ้งไม่มาก ต้องฉีดหลายสเปรย์ บางคนว่าล็อตใหม่อ่อนลง และบางคนว่าเครื่องเทศแรงหรือคล้ายสบู่'],
+ ["Angels' Share",'By Kilian','EDP',50,100,['gourmand','amber','spicy','woody'],4,['date','party','home'],4.35,'บน: Cognac · กลาง: Cinnamon, Tonka bean, Oak · ฐาน: Vanilla, Praline, Sandalwood, Candied almond',FGB+'By-Kilian/Angels-Share-62615.html',24072,'คอนยัคตอนเปิด แล้วต่อด้วยอบเชยและวานิลลา อบอุ่น กลมกล่อม เหมาะกับอากาศเย็น','บางคนว่าหวานเลี่ยนหรือกลิ่นไม่ค่อยเปลี่ยน ราคาสูงเมื่อเทียบกับตัวเลือกอื่น'],
+ ['Baccarat Rouge 540 Extrait de Parfum','Maison Francis Kurkdjian','Parfum',70,100,['amber','musk','woody'],5,['date','party','formal'],4.20,'บน: Bitter almond, Saffron · กลาง: Egyptian jasmine, Virginia cedar · ฐาน: Ambergris, Musk, Ambroxan, Cashmeran',FGB+'Maison-Francis-Kurkdjian/Baccarat-Rouge-540-Extrait-de-Parfum-46066.html',11610,'หรูหรา กลิ่นเข้มข้น ฟุ้งและติดทนดี ใช้ได้ทั้งชายและหญิง','ราคาสูง บางคนว่าหวานเกินไปหรือถูกพูดถึงเกินจริง ในห้องปิดอาจแรงเกิน และบางคนบอกว่าบนผิวตัวเองแทบไม่รู้สึก'],
+ ['Y Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','cafe','date'],4.41,'บน: Apple, Ginger, Bergamot · กลาง: Sage, Juniper berries, Geranium · ฐาน: Amberwood, Tonka bean, Cedar, Vetiver, Olibanum',FGB+'Yves-Saint-Laurent/Y-Eau-de-Parfum-50757.html',29177,'แอปเปิลสดชื่น ใส่ได้หลายฤดูและหลายโอกาส เข้าถึงง่าย หลายคนว่าฟุ้งและติดทนดี','บางคนว่าคล้ายน้ำหอมกลุ่มบลูตัวอื่น ช่วงเปิดอาจคมหรือฟังดูสังเคราะห์ หวานเกินไปในอากาศร้อน และบางคนว่าแต่ละล็อตไม่เท่ากัน'],
+ ['MYSLF Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','floral','woody'],3,['office','meeting','cafe','date'],4.33,'บน: Calabrian bergamot · กลาง: Tunisian orange blossom · ฐาน: Ambrofix, Patchouli',FGB+'Yves-Saint-Laurent/MYSLF-Eau-de-Parfum-84094.html',14714,'สะอาด สดชื่น ใส่ง่าย ดอกส้มเด่น เหมาะใช้ประจำวันหรือไปทำงาน','บางคนว่าเรียบง่ายหรือทั่วไป ช่วงท้ายหวานแบบสังเคราะห์ และติดทนสั้นกว่าที่คาดเมื่อเทียบกับราคา'],
+ ['Apple Brandy on the Rocks','By Kilian','EDP',50,100,['gourmand','woody','fresh','spicy'],4,['cafe','date'],4.13,'บน: Cardamom, Bergamot · กลาง: Apple, Rum, Brandy, Pineapple, Vanilla, Moss · ฐาน: Cedar, Ambroxan',FGB+'By-Kilian/Apple-Brandy-on-the-Rocks-68326.html',5161,'แอปเปิลผสมกลิ่นเหล้า ใส่ง่ายและดูประณีตกว่าตัวที่คล้ายกัน','บางคนว่าหวานหรือสังเคราะห์ ราคาสูงเมื่อเทียบกับความติดทน หลายคนบอกว่าจางเหลือกลิ่นบนผิวภายในไม่กี่ชั่วโมง'],
+ ['212 VIP Black','Carolina Herrera','EDP',100,100,['gourmand','musk','spicy'],4,['party','date'],4.29,'บน: Absinthe, Anise, Fennel · กลาง: Lavender · ฐาน: Black vanilla husk, Musk',FGB+'Carolina-Herrera/212-VIP-Black-46093.html',4145,'เปิดด้วยแอบซินธ์และโป๊ยกั๊กที่ไม่เหมือนใคร ปิดด้วยวานิลลามัสก์นุ่มๆ เหมาะกับกลางคืนและอากาศเย็น','ติดทนและฟุ้งอ่อน โดยเฉพาะล็อตใหม่ บางคนว่ากลิ่นทั่วไปหรือดูเด็กไป และราคาสูงเกินไป'],
+ ['Bleu de Chanel Eau de Parfum','Chanel','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','meeting','date','formal'],4.42,'บน: Grapefruit, Lemon, Mint, Bergamot, Pink pepper · กลาง: Ginger, Jasmine, Nutmeg · ฐาน: Incense, Amber, Cedar, Sandalwood, Patchouli',FGB+'Chanel/Bleu-de-Chanel-Eau-de-Parfum-25967.html',23324,'สดชื่น วู้ดดี้ มีแอมเบอร์ ดูดี เหมาะกับงานและโอกาสพิเศษ ใส่ได้หลากหลาย','หลายคนว่าล็อตล่าสุดติดทนและฟุ้งน้อยลง บางคนว่าทั่วไป ช่วงเปิดคล้ายสบู่หรือแป้ง ราคาสูง และมีของปลอมเยอะ ควรซื้อจากร้านที่เชื่อถือได้'],
+ ['Bleu de Chanel Parfum','Chanel','Parfum',100,100,['woody','fresh','amber'],4,['meeting','date','formal'],4.45,'บน: Lemon zest, Bergamot, Mint · กลาง: Lavender, Pineapple, Geranium · ฐาน: Sandalwood, Cedar, Amberwood, Tonka bean',FGB+'Chanel/Bleu-de-Chanel-Parfum-49912.html',11213,'นุ่มนวล ประณีต ใส่ได้เกือบทุกโอกาสและทุกฤดู','การฟุ้งและความติดทนบนผิวน้อยกว่าที่คาด ราคาสูง บางคนว่าทั่วไป และมีรายงานว่าล็อตใหม่อ่อนลง']
 ];
 
 /* ---------- state ---------- */
@@ -385,7 +388,7 @@ function resultsHTML(){
   out+='<article class="pick">'+bottle(p)+'<div><p class="eyebrow">แนะนำที่สุดตอนนี้</p><h3>'+esc(p.name)+'</h3><p class="brand">'+esc(p.brand||'')+(p.brand?' · ':'')+esc(p.conc||'')+'</p>'
     +'<div class="match"><div class="meter" role="img" aria-label="ความเหมาะสม '+top.pct+' เปอร์เซ็นต์"><i style="width:'+top.pct+'%"></i></div><span class="pct">'+top.pct+'%</span></div>'
     +'<ul class="why">'+top.R.slice(0,3).map(function(r){return '<li class="'+(r[0]?'':'neg')+'">'+esc(r[1])+'</li>'}).join('')+'</ul>'
-    +'<div class="how"><span><span class="n">'+tip.n+' สเปรย์</span> ที่'+tip.where+'</span><span class="muted">'+tip.extra+'</span></div></div></article>';
+    +'<div class="how"><span><span class="n">'+tip.n+' สเปรย์</span> ที่'+tip.where+'</span><span class="muted">'+tip.extra+'</span></div>'+(p.sum?'<p class="note" style="margin-top:10px">ข้อสังเกตจากผู้ใช้ Fragrantica: '+esc(p.sum.n)+'</p>':'')+'</div></article>';
   var rest=all.slice(1,3);
   if(rest.length)out+='<div class="runners">'+rest.map(function(r){return '<article class="mini">'+bottle(r.p)+'<div><h3>'+esc(r.p.name)+'</h3><p class="note">'+esc(r.p.brand||r.p.conc||'')+' · <span class="mono">'+r.pct+'%</span> · '+tipText(r.p).n+' สเปรย์</p><p class="why">'+esc(r.R[0]?r.R[0][1]:'')+'</p></div></article>'}).join('')+'</div>';
   var worst=all[all.length-1];
@@ -417,6 +420,7 @@ function listHTML(){
      +'<div class="fams">'+famTags(p)+'</div>'
      +(p.notes?'<p class="note">'+esc(p.notes)+'</p>':'')
      +(p.fg>0?'<a class="fg" href="'+esc(p.fgUrl||('https://www.fragrantica.com/search/?query='+encodeURIComponent(((p.brand||'')+' '+(p.name||'')).trim())))+'" target="_blank" rel="noopener">Fragrantica <span class="mono">'+(+p.fg).toFixed(2)+'/5</span></a>':'')
+     +(p.sum?'<details class="sum"><summary>ความเห็นโดยรวมจากผู้ใช้ Fragrantica'+(p.fgv?' ('+p.fgv.toLocaleString('en-US')+' โหวต)':'')+'</summary><p><b>ข้อดี</b> '+esc(p.sum.p)+'</p><p><b>ข้อสังเกต</b> '+esc(p.sum.n)+'</p><p class="note">สรุปด้วยคำของเราเอง ไม่ใช่ข้อความต้นฉบับ</p></details>':'')
      +'<div class="meta"><span>แรง '+dots(p.strength||3)+'</span>'+stars(p.rating)+'<span class="mono">เหลือ '+Math.round(p.remaining||0)+'%</span></div>'
      +'<div class="acts"><button class="btn sm" data-act="edit" data-id="'+p.id+'">แก้ไข</button>'
      +(cf?'<button class="btn sm danger" data-act="del" data-id="'+p.id+'">ยืนยันลบ</button><button class="btn sm" data-act="nodel">ยกเลิก</button>':'<button class="btn sm" data-act="askdel" data-id="'+p.id+'">ลบ</button>')+'</div></article>';
@@ -438,7 +442,13 @@ function render(){
   $('#tab-today').setAttribute('aria-selected',S.tab==='today');
   $('#tab-coll').setAttribute('aria-selected',S.tab==='coll');
   $('#wxsrc').textContent=S.tab==='today'?'พยากรณ์'+SNAP.place+' ณ '+SNAP.at:'';
+  syncPack();
 }
+function packUpdates(){var map={};PACK.forEach(function(x){map[packKey(x[1],x[0],x[2])]=x});
+  return S.perfumes.filter(function(p){return p.src==='fragrantica'&&!p.sum&&map[packKey(p.brand||'',p.name,p.conc||'')]}).map(function(p){var x=map[packKey(p.brand||'',p.name,p.conc||'')];var q=JSON.parse(JSON.stringify(p));q.fgv=x[11];q.sum={p:x[12],n:x[13]};return q})}
+async function applyUpdates(u){for(var i=0;i<u.length;i++)await savePerfume(u[i]);render()}
+var syncTried=false;
+function syncPack(){if(!S.loaded||syncTried)return;var u=packUpdates();if(!u.length)return;syncTried=true;applyUpdates(u)}
 function renderResults(){var r=$('#results');if(r)r.innerHTML=resultsHTML()}
 function renderList(){var r=$('#list');if(r)r.innerHTML=listHTML()}
 
@@ -502,7 +512,7 @@ function packPending(){var have={};S.perfumes.forEach(function(p){have[packKey(p
 async function importPack(){
   var todo=packPending();
   for(var i=0;i<todo.length;i++){var x=todo[i];
-    await savePerfume({id:uid(),name:x[0],brand:x[1],conc:x[2],size:x[3],remaining:x[4],families:x[5],strength:x[6],occasions:x[7],rating:3,fg:x[8],notes:x[9],fgUrl:x[10],src:'fragrantica',added:Date.now()+i});
+    await savePerfume({id:uid(),name:x[0],brand:x[1],conc:x[2],size:x[3],remaining:x[4],families:x[5],strength:x[6],occasions:x[7],rating:3,fg:x[8],notes:x[9],fgUrl:x[10],fgv:x[11],sum:{p:x[12],n:x[13]},src:'fragrantica',added:Date.now()+i});
   }
   render();
 }
