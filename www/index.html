@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7A2E48">
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>ตู้เก็บกลิ่น</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Prompt:wght@500;600&display=swap">
+<style>
+/* Layout: ตู้กระจกแนวตั้ง. แถบเงื่อนไข (โอกาส/อากาศ) ซ้าย, คำแนะนำขวา; ขวดน้ำหอมวาดเป็น SVG ระดับน้ำหอมตามปริมาณคงเหลือจริง */
+:root{
+  --bg:#EDF0EE; --surface:#F8FAF9; --surface2:#E2E7E4; --fg:#18211F; --muted:#56635E; --line:#C9D1CD;
+  --accent:#7A2E48; --accent-fg:#FFFFFF; --accent-soft:#EBD9E0;
+  --good:#276B4D; --warn:#9A5612; --bad:#A63636;
+  --t-fresh:#D9BE3C; --t-aquatic:#4DA6BF; --t-green:#76A04F; --t-floral:#D4829F; --t-musk:#B9A692;
+  --t-woody:#A06A3A; --t-spicy:#BF4F28; --t-amber:#C4841F; --t-gourmand:#85553A; --t-leather:#5B4636;
+  --f-display:'Prompt','IBM Plex Sans Thai',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Thai',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171A; --surface:#1A2125; --surface2:#232C31; --fg:#E6ECEA; --muted:#9AA8A3; --line:#2E3A40;
+  --accent:#E49BB4; --accent-fg:#2A0F1A; --accent-soft:#3A222C;
+  --good:#6CC49A; --warn:#E0A05A; --bad:#E58383;
+  --t-fresh:#E6CC52; --t-aquatic:#62BAD3; --t-green:#8DB864; --t-floral:#E597B2; --t-musk:#CDBBA7;
+  --t-woody:#B98048; --t-spicy:#D9643A; --t-amber:#DB9A33; --t-gourmand:#A06A4A; --t-leather:#8A705A;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171A; --surface:#1A2125; --surface2:#232C31; --fg:#E6ECEA; --muted:#9AA8A3; --line:#2E3A40;
+  --accent:#E49BB4; --accent-fg:#2A0F1A; --accent-soft:#3A222C;
+  --good:#6CC49A; --warn:#E0A05A; --bad:#E58383;
+  --t-fresh:#E6CC52; --t-aquatic:#62BAD3; --t-green:#8DB864; --t-floral:#E597B2; --t-musk:#CDBBA7;
+  --t-woody:#B98048; --t-spicy:#D9643A; --t-amber:#DB9A33; --t-gourmand:#A06A4A; --t-leather:#8A705A;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:20px 56px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance;line-height:1.25}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+
+/* header */
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+header.top h1{font-size:30px}
+header.top .sub{color:var(--muted);font-size:13px;margin-top:2px}
+.tabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:12px}
+.tabs button{border:0;background:transparent;padding:8px 18px;border-radius:9px;font-weight:500;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* chips & controls */
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;line-height:1.4;white-space:nowrap}
+button.chip,label.chip{cursor:pointer}
+.chip[aria-pressed=true],.chip:has(input:checked){background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.chip:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 16px;border-radius:10px;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:5px 12px;font-size:13px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.field>.lbl{font-size:13px;font-weight:500;color:var(--muted)}
+input[type=text],input[type=number],select,textarea{width:100%;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+textarea{resize:vertical;min-height:64px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+
+/* today */
+.today{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px;padding-top:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel h2{font-size:17px}
+.slider-row{display:flex;flex-direction:column;gap:4px}
+.slider-row .head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);font-weight:500}
+.slider-row .head output{font-family:var(--f-mono);font-size:16px;color:var(--fg)}
+.fc{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.fc button{flex:0 0 auto;min-width:58px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;display:flex;flex-direction:column;align-items:center;gap:0;font-size:12px;color:var(--muted)}
+.fc button b{font-family:var(--f-mono);font-size:15px;color:var(--fg);font-weight:500}
+.fc button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.note{font-size:12px;color:var(--muted);line-height:1.5}
+
+.summary{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin-bottom:16px}
+.summary .big{font-family:var(--f-display);font-size:22px;font-weight:600}
+.pick{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:20px}
+.pick .bottle{width:96px;height:auto}
+.pick h3{font-size:24px}
+.pick .brand{color:var(--muted);font-size:13px}
+.match{display:flex;align-items:center;gap:10px;margin:12px 0}
+.meter{flex:1;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;max-width:260px}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.match .pct{font-family:var(--f-mono);font-size:14px;font-weight:500}
+ul.why{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:14px}
+ul.why li{display:flex;gap:8px}
+ul.why li::before{content:'+';font-family:var(--f-mono);color:var(--good);font-weight:600}
+ul.why li.neg::before{content:'−';color:var(--bad)}
+.how{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-size:14px;display:flex;flex-direction:column;gap:2px}
+.how .n{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+.runners{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px}
+.mini .bottle{width:44px;height:auto}
+.mini h3{font-size:15px}
+.mini .why{font-size:13px;color:var(--muted);margin-top:4px}
+.avoid{margin-top:14px;font-size:13px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:12px}
+.avoid b{color:var(--bad);font-weight:600}
+
+/* bottle */
+.bottle .cap{fill:var(--fg);opacity:.85}
+.bottle .neck{fill:var(--muted);opacity:.5}
+.bottle .glass{fill:var(--surface2);stroke:var(--muted);stroke-width:1.4}
+.bottle .liquid{fill:var(--tint,var(--t-musk))}
+.bottle .shine{fill:#fff;opacity:.35}
+.t-fresh{--tint:var(--t-fresh)}.t-aquatic{--tint:var(--t-aquatic)}.t-green{--tint:var(--t-green)}.t-floral{--tint:var(--t-floral)}.t-musk{--tint:var(--t-musk)}
+.t-woody{--tint:var(--t-woody)}.t-spicy{--tint:var(--t-spicy)}.t-amber{--tint:var(--t-amber)}.t-gourmand{--tint:var(--t-gourmand)}.t-leather{--tint:var(--t-leather)}
+
+/* collection */
+.coll{padding-top:24px;display:flex;flex-direction:column;gap:16px}
+.toolbar{display:grid;grid-template-columns:minmax(0,1fr) 180px auto;gap:10px;align-items:end}
+.stat{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card .row1{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px}
+.card .bottle{width:52px;height:auto}
+.card h3{font-size:16px;overflow-wrap:anywhere}
+.card .brand{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.tag.ex{background:var(--accent-soft);color:var(--accent)}
+.fams{display:flex;flex-wrap:wrap;gap:4px}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.card .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:8px;flex-wrap:wrap}
+.card .acts{display:flex;gap:8px;margin-top:auto}
+a.fg{color:var(--accent);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.stars{color:var(--accent);letter-spacing:1px;font-size:13px}
+.empty{padding:40px 20px;text-align:center;border:1px dashed var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:12px;background:var(--surface)}
+.empty h2{font-size:20px}
+.empty p{max-width:44ch;color:var(--muted)}
+
+/* sheet */
+.sheet{position:fixed;inset:0;background:rgba(10,14,16,.55);display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;z-index:20;padding:20px 12px}
+.sheet[hidden]{display:none}
+.sheet form{background:var(--bg);border:1px solid var(--line);border-radius:18px;width:100%;max-width:560px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.sheet h2{font-size:20px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rem-out{font-family:var(--f-mono)}
+.sheet .foot{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.status{margin-top:32px;font-size:12px;color:var(--muted);display:flex;gap:8px 16px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+
+@media (max-width:820px){
+  .today{grid-template-columns:minmax(0,1fr)}
+  .toolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .toolbar .add{grid-column:1/-1}
+}
+@media (max-width:520px){
+  header.top h1{font-size:26px}
+  .pick{grid-template-columns:minmax(0,1fr);padding:18px}
+  .pick .bottle{width:72px}
+  .runners{grid-template-columns:minmax(0,1fr)}
+  .two,.three{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .meter i{transition:width .3s ease}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">คอลเลกชันน้ำหอมส่วนตัว</p>
+      <h1>ตู้เก็บกลิ่น</h1>
+      <p class="sub" id="dateline"></p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="เมนูหลัก">
+      <button role="tab" id="tab-today" data-act="tab" data-tab="today" aria-selected="true">วันนี้ใส่อะไรดี</button>
+      <button role="tab" id="tab-coll" data-act="tab" data-tab="coll" aria-selected="false">คอลเลกชัน</button>
+    </div>
+  </header>
+  <main id="app"></main>
+  <div class="status"><span id="storage"></span><span id="wxsrc"></span></div>
+</div>
+<div class="sheet" id="sheet" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- ข้อมูลอากาศ: ค่าพยากรณ์เชียงราย ณ เวลาที่สร้างหน้านี้ ---------- */
+var SNAP={place:'เชียงราย',at:'ยังไม่ได้อัปเดต',temp:28.4,cond:'cloudy',
+  days:[{d:'2026-10-11',hi:29.3,pop:45},{d:'2026-10-12',hi:31.6,pop:15},{d:'2026-10-13',hi:32.0,pop:15},{d:'2026-10-14',hi:31.1,pop:30},
+        {d:'2026-10-15',hi:31.0,pop:15},{d:'2026-10-16',hi:30.5,pop:15},{d:'2026-10-17',hi:30.9,pop:20},{d:'2026-10-18',hi:32.1,pop:10}]};
+
+/* ---------- ความรู้เรื่องกลิ่น ---------- */
+var FAM={fresh:'สดชื่น/ซิตรัส',aquatic:'อควอติก',green:'เขียว/ใบไม้',floral:'ดอกไม้',musk:'มัสก์/แป้ง',woody:'วู้ดดี้',spicy:'เครื่องเทศ',amber:'แอมเบอร์',gourmand:'หวาน/กูร์มองด์',leather:'หนัง/สโมกี้'};
+var KEYS=Object.keys(FAM);
+/* น้ำหนักตามอากาศ: [ร้อนจัด, ร้อน, อุ่น, สบาย, เย็น] */
+var WX={fresh:[3,3,2,1,0],aquatic:[3,3,2,1,-1],green:[2,2,2,1,0],floral:[0,1,2,2,1],musk:[0,1,1,2,2],
+  woody:[-1,0,1,2,3],spicy:[-2,-1,0,2,3],amber:[-3,-2,-1,1,3],gourmand:[-3,-2,-1,1,3],leather:[-2,-1,0,2,3]};
+var BUCKET=['ร้อนจัด','ร้อน','อุ่น','สบาย','เย็น'];
+var OCC={
+  office:{th:'ทำงาน/ออฟฟิศ',s:[1,3],w:{musk:2,fresh:2,woody:1,floral:1,green:1,gourmand:-1,amber:-1,leather:-2}},
+  meeting:{th:'ประชุม/สัมภาษณ์งาน',s:[1,3],w:{fresh:2,woody:2,musk:2,green:1,amber:-1,gourmand:-2,leather:-1}},
+  cafe:{th:'คาเฟ่/เจอเพื่อน',s:[2,4],w:{fresh:2,floral:2,green:2,musk:1,gourmand:1,woody:1,aquatic:1}},
+  outdoor:{th:'เที่ยว/ออกกำลังกายกลางแจ้ง',s:[1,3],w:{fresh:3,aquatic:3,green:2,floral:1,amber:-3,gourmand:-2,leather:-2,spicy:-1}},
+  date:{th:'ออกเดต',s:[3,4],w:{amber:3,gourmand:2,spicy:2,woody:2,musk:2,floral:1,leather:1}},
+  party:{th:'ปาร์ตี้/ออกงานกลางคืน',s:[4,5],w:{amber:2,spicy:2,gourmand:2,leather:2,woody:1,aquatic:-1,green:-1}},
+  formal:{th:'งานแต่ง/พิธีการ',s:[2,4],w:{floral:3,woody:2,musk:2,amber:1,fresh:1,gourmand:-1,leather:-1,aquatic:-1}},
+  home:{th:'อยู่บ้าน/พักผ่อน',s:[1,3],w:{musk:3,gourmand:2,woody:1,floral:1,amber:1}}
+};
+var CONC=['Cologne','EDT','EDP','Parfum','Body mist'];
+var STR=['','บางเบา','เบา','กลาง','ชัด','แรง'];
+var COND={clear:'ฟ้าใส',cloudy:'มีเมฆ',rain:'ฝนตก'};
+var PARTS={morning:'เช้า',afternoon:'บ่าย',evening:'เย็น',night:'ค่ำ'};
+/* รายการน้ำหอมของผู้ใช้ + ข้อมูลจากหน้า Fragrantica (ดึงเมื่อ 11 ต.ค. 2026): [ชื่อ, แบรนด์, ความเข้มข้น, ขนาด, คงเหลือ%, กลุ่มกลิ่น, ความแรง, โอกาส, คะแนน Fragrantica, โน้ต, ลิงก์] */
+var FGB='https://www.fragrantica.com/perfume/';
+var PACK=[
+ ['Mirto di Panarea','Acqua di Parma','EDT',100,100,['fresh','aquatic','green'],2,['office','cafe','outdoor'],4.11,'บน: Myrtle, Lemon, Bergamot, Basil · กลาง: Sea notes, Jasmine, Rose · ฐาน: Juniper, Cedar, Mastic, Amber',FGB+'Acqua-di-Parma/Acqua-di-parma-Blue-Mediterraneo-Mirto-di-Panarea-3108.html'],
+ ['Bleu de Chanel','Chanel','EDT',100,100,['fresh','woody','spicy'],3,['office','meeting','cafe','date'],4.18,'บน: Grapefruit, Lemon, Mint, Pink pepper · กลาง: Ginger, Nutmeg, Jasmine · ฐาน: Incense, Cedar, Vetiver, Sandalwood, White musk',FGB+'Chanel/Bleu-de-Chanel-9099.html'],
+ ['Absolu Aventus','Creed','Parfum',100,100,['fresh','spicy','woody'],4,['date','party','formal'],4.47,'บน: Pineapple, Black currant, Grapefruit, Pink pepper · กลาง: Cardamom, Cinnamon, Ginger · ฐาน: Vetiver, Patchouli',FGB+'Creed/Absolu-Aventus-106624.html'],
+ ["La Nuit de l'Homme",'Yves Saint Laurent','EDT',100,100,['spicy','woody'],3,['date','party'],4.45,'บน: Cardamom · กลาง: Lavender, Virginia cedar, Bergamot · ฐาน: Vetiver, Caraway',FGB+'Yves-Saint-Laurent/La-Nuit-de-l-Homme-5521.html'],
+ ["Angels' Share",'By Kilian','EDP',50,100,['gourmand','amber','spicy','woody'],4,['date','party','home'],4.35,'บน: Cognac · กลาง: Cinnamon, Tonka bean, Oak · ฐาน: Vanilla, Praline, Sandalwood, Candied almond',FGB+'By-Kilian/Angels-Share-62615.html'],
+ ['Baccarat Rouge 540 Extrait de Parfum','Maison Francis Kurkdjian','Parfum',70,100,['amber','musk','woody'],5,['date','party','formal'],4.20,'บน: Bitter almond, Saffron · กลาง: Egyptian jasmine, Virginia cedar · ฐาน: Ambergris, Musk, Ambroxan, Cashmeran',FGB+'Maison-Francis-Kurkdjian/Baccarat-Rouge-540-Extrait-de-Parfum-46066.html'],
+ ['Y Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','cafe','date'],4.41,'บน: Apple, Ginger, Bergamot · กลาง: Sage, Juniper berries, Geranium · ฐาน: Amberwood, Tonka bean, Cedar, Vetiver, Olibanum',FGB+'Yves-Saint-Laurent/Y-Eau-de-Parfum-50757.html'],
+ ['MYSLF Eau de Parfum','Yves Saint Laurent','EDP',100,100,['fresh','floral','woody'],3,['office','meeting','cafe','date'],4.33,'บน: Calabrian bergamot · กลาง: Tunisian orange blossom · ฐาน: Ambrofix, Patchouli',FGB+'Yves-Saint-Laurent/MYSLF-Eau-de-Parfum-84094.html'],
+ ['Apple Brandy on the Rocks','By Kilian','EDP',50,100,['gourmand','woody','fresh','spicy'],4,['cafe','date'],4.13,'บน: Cardamom, Bergamot · กลาง: Apple, Rum, Brandy, Pineapple, Vanilla, Moss · ฐาน: Cedar, Ambroxan',FGB+'By-Kilian/Apple-Brandy-on-the-Rocks-68326.html'],
+ ['212 VIP Black','Carolina Herrera','EDP',100,100,['gourmand','musk','spicy'],4,['party','date'],4.29,'บน: Absinthe, Anise, Fennel · กลาง: Lavender · ฐาน: Black vanilla husk, Musk',FGB+'Carolina-Herrera/212-VIP-Black-46093.html'],
+ ['Bleu de Chanel Eau de Parfum','Chanel','EDP',100,100,['fresh','woody','amber','spicy'],4,['office','meeting','date','formal'],4.42,'บน: Grapefruit, Lemon, Mint, Bergamot, Pink pepper · กลาง: Ginger, Jasmine, Nutmeg · ฐาน: Incense, Amber, Cedar, Sandalwood, Patchouli',FGB+'Chanel/Bleu-de-Chanel-Eau-de-Parfum-25967.html'],
+ ['Bleu de Chanel Parfum','Chanel','Parfum',100,100,['woody','fresh','amber'],4,['meeting','date','formal'],4.45,'บน: Lemon zest, Bergamot, Mint · กลาง: Lavender, Pineapple, Geranium · ฐาน: Sandalwood, Cedar, Amberwood, Tonka bean',FGB+'Chanel/Bleu-de-Chanel-Parfum-49912.html']
+];
+
+/* ---------- state ---------- */
+var now0=new Date();
+var S={tab:'today',perfumes:[],loaded:false,mode:'pending',
+  occ:(now0.getDay()===0||now0.getDay()===6)?'cafe':'office',
+  wx:{temp:SNAP.temp,hum:70,cond:SNAP.cond,place:'in',label:'now'},
+  part:'auto',filter:'all',q:'',sort:'name',editing:null,confirm:null,busy:false};
+
+var $=function(s,r){return (r||document).querySelector(s)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var clamp=function(n,a,b){return Math.min(b,Math.max(a,n))};
+var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+
+/* ---------- storage: db (บัญชีผู้ใช้) -> localStorage -> หน่วยความจำ ---------- */
+var coll=null,LS_KEY='scent-cabinet-v1';
+function lsRead(){try{var r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):[]}catch(e){return []}}
+function lsWrite(){try{localStorage.setItem(LS_KEY,JSON.stringify(S.perfumes));return true}catch(e){return false}}
+function setMode(m){S.mode=m;var t={db:'บันทึกในบัญชีของคุณ ใช้ได้ทุกอุปกรณ์',local:'บันทึกในเบราว์เซอร์นี้เท่านั้น',memory:'ยังบันทึกไม่ได้ ข้อมูลจะหายเมื่อปิดหน้านี้',pending:'กำลังเปิดตู้...'};$('#storage').textContent=t[m]||''}
+async function initStore(){
+  try{
+    if(window.claude&&window.claude.use){
+      var results=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+      var db=results[0],user=results[1];
+      var id=user?await user.id():null;
+      if(db&&id){
+        coll=db.collection('data/users/'+id);
+        setMode('db');
+        coll.onSnapshot(function(snap){
+          S.perfumes=snap.docs.filter(function(d){return d.id.indexOf('p_')===0}).map(function(d){return d.data()});
+          S.loaded=true;render();
+        },function(){coll=null;fallback()});
+        return;
+      }
+    }
+  }catch(e){}
+  fallback();
+}
+function fallback(){
+  S.perfumes=lsRead();
+  var ok=true;try{localStorage.setItem(LS_KEY+'-t','1');localStorage.removeItem(LS_KEY+'-t')}catch(e){ok=false}
+  setMode(ok?'local':'memory');S.loaded=true;render();
+}
+async function savePerfume(p){
+  var i=S.perfumes.findIndex(function(x){return x.id===p.id});
+  if(coll){try{await coll.doc('p_'+p.id).set(p)}catch(e){toast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');return false}return true}
+  if(i>=0)S.perfumes[i]=p;else S.perfumes.push(p);
+  lsWrite();return true;
+}
+async function deletePerfume(id){
+  if(coll){try{await coll.doc('p_'+id).delete()}catch(e){toast('ลบไม่สำเร็จ ลองใหม่อีกครั้ง')}return}
+  S.perfumes=S.perfumes.filter(function(x){return x.id!==id});lsWrite();
+}
+function toast(m){var t=$('#storage');t.textContent=m;setTimeout(function(){setMode(S.mode)},3500)}
+
+/* ---------- เครื่องยนต์แนะนำ ---------- */
+function feel(){var w=S.wx;return w.temp+(w.hum>=60?(w.hum-60)*0.08:0)}
+function bucket(){var f=feel();return f>=33?0:f>=29?1:f>=24?2:f>=18?3:4}
+function dayPart(){if(S.part!=='auto')return S.part;var h=new Date().getHours();return h>=5&&h<11?'morning':h<17?'afternoon':h<20?'evening':'night'}
+function wxLabel(){var b=BUCKET[bucket()];var h=S.wx.hum;return b+(h>=75?' · ชื้น':h<=40?' · แห้ง':'')}
+function primary(p){return (p.families&&p.families[0])||'musk'}
+function has(p,list){return (p.families||[]).some(function(f){return list.indexOf(f)>=0})}
+
+function score(p){
+  var b=bucket(),occ=OCC[S.occ],fams=p.families||[],st=p.strength||3,part=dayPart();
+  var avg=function(f){return fams.length?fams.reduce(function(s,k){return s+f(k)},0)/fams.length:0};
+  var o=avg(function(k){return occ.w[k]||0});
+  var w=avg(function(k){return WX[k][b]});
+  var raw=o*1.2+w*1.1,fit=0;
+  if(st<occ.s[0])fit=-(occ.s[0]-st)*1.2;else if(st>occ.s[1])fit=-(st-occ.s[1])*1.2;
+  raw+=fit;
+  if(b<=1&&st>=4)raw-=(st-3)*0.8;
+  if(b===4&&st<=1)raw-=0.8;
+  if(S.wx.place==='out'&&b<=1&&st>=4)raw-=0.6;
+  if(S.wx.cond==='rain'&&has(p,['woody','green','musk']))raw+=0.6;
+  if((part==='morning'||part==='afternoon')&&has(p,['fresh','green','aquatic']))raw+=0.7;
+  if((part==='evening'||part==='night')&&has(p,['amber','gourmand','spicy','leather']))raw+=0.7;
+  var tagged=(p.occasions||[]).indexOf(S.occ)>=0;if(tagged)raw+=2.5;
+  var rate=p.rating||3;raw+=(rate-3)*0.4;
+  var fg=+p.fg||0;if(fg>0)raw+=(fg-3.5)*0.8;
+  var low=(p.remaining||0)<10;if(low)raw-=1;
+  var R=[];
+  if(w>=1.5)R.push([1,b<=1?'อากาศร้อน กลิ่นกลุ่มนี้เบาและสดชื่น ไม่อบหนัก':b===2?'อากาศอุ่น กลิ่นกลุ่มนี้กำลังพอดี':b===3?'อากาศสบาย กลิ่นกลุ่มนี้ฟุ้งนุ่มนวล':'อากาศเย็น โน้ตอุ่นช่วยให้กลิ่นนุ่มและติดนาน']);
+  if(w<=-1)R.push([0,b<=1?'โน้ตหนักและหวาน อาจอบและเลี่ยนในอากาศร้อนชื้น':'โน้ตสดเบา อาจจางเร็วในอากาศเย็น']);
+  if(o>=1.5)R.push([1,'ตรงกับโอกาส "'+occ.th+'"']);
+  if(o<=-1)R.push([0,'ไม่ค่อยเข้ากับโอกาส "'+occ.th+'"']);
+  if(fit===0)R.push([1,'ความแรงระดับ'+STR[st]+' พอดีกับโอกาสนี้']);else if(st>occ.s[1])R.push([0,'แรงไปสำหรับโอกาสนี้']);else R.push([0,'เบาไปสำหรับโอกาสนี้']);
+  if(tagged)R.push([1,'คุณตั้งไว้ว่าขวดนี้เหมาะกับโอกาสนี้']);
+  if(rate>=4)R.push([1,'เป็นขวดที่คุณให้คะแนนสูง']);
+  if(fg>=4)R.push([1,'คะแนน Fragrantica สูง ('+fg.toFixed(2)+'/5)']);else if(fg>0&&fg<3.3)R.push([0,'คะแนน Fragrantica ค่อนข้างต่ำ ('+fg.toFixed(2)+'/5)']);
+  if(low)R.push([0,'เหลือน้อยกว่า 10% แล้ว']);
+  R.sort(function(a,c){return c[0]-a[0]});
+  return {p:p,pct:clamp(Math.round(50+raw*5.2),4,99),R:R};
+}
+function sprays(p){
+  var st=p.strength||3,b=bucket(),n=[0,4,3,3,2,1][st];
+  if(b<=1&&st>=3)n-=1;if(b===4)n+=1;
+  return clamp(n,1,5);
+}
+function tipText(p){
+  var b=bucket(),n=sprays(p),where,extra;
+  if(b<=1){where='ข้อพับแขนและหลังคอ';extra='อากาศร้อนทำให้กลิ่นฟุ้งเร็ว เลี่ยงการฉีดตรงจุดที่โดนแดดจัด'}
+  else if(b===4){where='ลำคอ ข้อมือ และหลังใบหู';extra='ผิวแห้งทำให้กลิ่นหาย ทาโลชั่นไร้กลิ่นก่อนฉีดจะติดนานขึ้น'}
+  else{where='ข้อมือ ลำคอ และหน้าอก';extra=S.wx.hum>=75?'ความชื้นสูงทำให้กลิ่นฟุ้งขึ้น ไม่ต้องฉีดเพิ่ม':'ฉีดก่อนออกจากบ้านประมาณ 15 นาทีให้กลิ่นนิ่ง'}
+  if(S.wx.cond==='rain')extra+=' · ฝนตกควรพกขวดเล็กไว้ฉีดเติมระหว่างวัน';
+  return {n:n,where:where,extra:extra};
+}
+
+/* ---------- views ---------- */
+function bottle(p){
+  var id='c'+p.id,lvl=clamp(+p.remaining||0,0,100),h=48*lvl/100,y=34+48-h;
+  return '<svg class="bottle t-'+primary(p)+'" viewBox="0 0 60 90" role="img" aria-label="ขวดน้ำหอม เหลือ '+Math.round(lvl)+'%"><defs><clipPath id="'+id+'"><rect x="10" y="34" width="40" height="48" rx="8"/></clipPath></defs>'
+   +'<rect class="cap" x="22" y="6" width="16" height="14" rx="3"/><rect class="neck" x="25" y="20" width="10" height="14"/>'
+   +'<rect class="glass" x="10" y="34" width="40" height="48" rx="8"/><rect class="liquid" x="10" y="'+y+'" width="40" height="'+h+'" clip-path="url(#'+id+')"/>'
+   +'<rect class="shine" x="15" y="40" width="3" height="30" rx="1.5"/></svg>';
+}
+function dots(n){var s='';for(var i=1;i<=5;i++)s+='<i class="'+(i<=n?'on':'')+'"></i>';return '<span class="dots" title="ความแรง: '+STR[n]+'">'+s+'</span>'}
+function stars(n){n=n||3;return '<span class="stars" aria-label="ให้คะแนน '+n+' จาก 5">'+'★'.repeat(n)+'☆'.repeat(5-n)+'</span>'}
+function famTags(p){return (p.families||[]).map(function(f){return '<span class="tag">'+FAM[f]+'</span>'}).join('')}
+function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+function condPanel(){
+  var w=S.wx,iso=localISO(new Date());
+  var days=SNAP.days.filter(function(x){return x.d>=iso}).slice(0,7);
+  var fc=days.map(function(x){
+    var dt=new Date(x.d+'T12:00:00'),lab=x.d===iso?'วันนี้':dt.toLocaleDateString('th-TH',{weekday:'short'});
+    return '<button type="button" data-act="fc" data-d="'+x.d+'" aria-pressed="'+(w.label===x.d)+'">'+lab+'<b>'+Math.round(x.hi)+'°</b>ฝน '+x.pop+'%</button>';
+  }).join('');
+  return '<section class="panel" aria-label="เงื่อนไข">'
+   +'<div class="field"><span class="lbl">วันนี้จะไปไหน / ทำอะไร</span><div class="chips" role="group" aria-label="โอกาส">'
+   +Object.keys(OCC).map(function(k){return '<button type="button" class="chip" data-act="occ" data-k="'+k+'" aria-pressed="'+(S.occ===k)+'">'+OCC[k].th+'</button>'}).join('')
+   +'</div></div>'
+   +'<div>'+cityHead()+'<div style="display:flex;flex-direction:column;gap:14px">'
+   +'<div class="slider-row"><div class="head"><label for="temp">อุณหภูมิ</label><output id="temp-o">'+w.temp.toFixed(1)+'°C</output></div><input type="range" id="temp" data-in="temp" min="10" max="42" step="0.5" value="'+w.temp+'"></div>'
+   +'<div class="slider-row"><div class="head"><label for="hum">ความชื้น (ประมาณ)</label><output id="hum-o">'+w.hum+'%</output></div><input type="range" id="hum" data-in="hum" min="20" max="100" step="5" value="'+w.hum+'"></div>'
+   +'<div class="chips" role="group" aria-label="สภาพฟ้า">'+Object.keys(COND).map(function(k){return '<button type="button" class="chip" data-act="cond" data-k="'+k+'" aria-pressed="'+(w.cond===k)+'">'+COND[k]+'</button>'}).join('')+'</div>'
+   +'<div class="chips" role="group" aria-label="สถานที่"><button type="button" class="chip" data-act="place" data-k="in" aria-pressed="'+(w.place==='in')+'">ในอาคาร/แอร์</button><button type="button" class="chip" data-act="place" data-k="out" aria-pressed="'+(w.place==='out')+'">กลางแจ้ง</button></div>'
+   +'<div class="field"><label for="part">ช่วงเวลา</label><select id="part" data-in="part"><option value="auto"'+(S.part==='auto'?' selected':'')+'>ตามเวลาปัจจุบัน ('+PARTS[dayPart()==='auto'?'morning':dayPart()]+')</option>'
+   +Object.keys(PARTS).map(function(k){return '<option value="'+k+'"'+(S.part===k?' selected':'')+'>'+PARTS[k]+'</option>'}).join('')+'</select></div>'
+   +'</div></div>'
+   +'<div class="field"><span class="lbl">พยากรณ์'+SNAP.place+' แตะเพื่อวางแผนล่วงหน้า</span><div class="fc"><button type="button" data-act="fc" data-d="now" aria-pressed="'+(w.label==='now')+'">ตอนนี้<b>'+Math.round(SNAP.temp)+'°</b>'+COND[SNAP.cond]+'</button>'+fc+'</div>'
+   +'<p class="note">ค่าอากาศบันทึก ณ '+SNAP.at+' ถ้าอากาศจริงต่างออกไป ปรับแถบด้านบนได้เลย</p></div>'
+   +'</section>';
+}
+function resultsHTML(){
+  if(!S.loaded)return '<div class="empty"><p>กำลังเปิดตู้...</p></div>';
+  if(!S.perfumes.length)return '<div class="empty"><h2>ตู้ยังว่างอยู่</h2><p>เพิ่มน้ำหอมที่มี แล้วระบบจะเลือกขวดที่เหมาะกับโอกาสและอากาศให้ทุกครั้งที่เปิดหน้านี้</p><div class="chips" style="justify-content:center"><button class="btn primary" data-act="add">เพิ่มขวดแรก</button><button class="btn" data-act="importpack">นำเข้ารายการของฉัน (12 ขวด)</button><button class="btn" data-act="seed">ใส่ตัวอย่าง 6 ขวดให้ลอง</button></div></div>';
+  var all=S.perfumes.map(score).sort(function(a,c){return c.pct-a.pct}),top=all[0],p=top.p,tip=tipText(p);
+  var out='<div class="summary"><span class="big">'+S.wx.temp.toFixed(0)+'° · '+wxLabel()+'</span><span class="muted">'+COND[S.wx.cond]+' · โอกาส: '+OCC[S.occ].th+'</span></div>';
+  out+='<article class="pick">'+bottle(p)+'<div><p class="eyebrow">แนะนำที่สุดตอนนี้</p><h3>'+esc(p.name)+'</h3><p class="brand">'+esc(p.brand||'')+(p.brand?' · ':'')+esc(p.conc||'')+'</p>'
+    +'<div class="match"><div class="meter" role="img" aria-label="ความเหมาะสม '+top.pct+' เปอร์เซ็นต์"><i style="width:'+top.pct+'%"></i></div><span class="pct">'+top.pct+'%</span></div>'
+    +'<ul class="why">'+top.R.slice(0,3).map(function(r){return '<li class="'+(r[0]?'':'neg')+'">'+esc(r[1])+'</li>'}).join('')+'</ul>'
+    +'<div class="how"><span><span class="n">'+tip.n+' สเปรย์</span> ที่'+tip.where+'</span><span class="muted">'+tip.extra+'</span></div></div></article>';
+  var rest=all.slice(1,3);
+  if(rest.length)out+='<div class="runners">'+rest.map(function(r){return '<article class="mini">'+bottle(r.p)+'<div><h3>'+esc(r.p.name)+'</h3><p class="note">'+esc(r.p.brand||r.p.conc||'')+' · <span class="mono">'+r.pct+'%</span> · '+tipText(r.p).n+' สเปรย์</p><p class="why">'+esc(r.R[0]?r.R[0][1]:'')+'</p></div></article>'}).join('')+'</div>';
+  var worst=all[all.length-1];
+  if(all.length>=3&&worst.pct<45){var neg=worst.R.filter(function(r){return !r[0]})[0];out+='<p class="avoid"><b>ควรพักไว้ก่อน</b> '+esc(worst.p.name)+(neg?' เพราะ'+esc(neg[1]):'')+'</p>'}
+  return out;
+}
+function todayHTML(){return '<div class="today">'+condPanel()+'<section id="results" aria-live="polite">'+resultsHTML()+'</section></div>'}
+
+function listHTML(){
+  if(!S.loaded)return '<div class="empty"><p>กำลังเปิดตู้...</p></div>';
+  if(!S.perfumes.length)return '<div class="empty"><h2>ยังไม่มีน้ำหอมในตู้</h2><p>บันทึกชื่อ กลุ่มกลิ่น ความแรง และปริมาณที่เหลือ เพื่อให้ระบบแนะนำได้แม่นขึ้น</p><div class="chips" style="justify-content:center"><button class="btn primary" data-act="add">เพิ่มน้ำหอมขวดแรก</button><button class="btn" data-act="importpack">นำเข้ารายการของฉัน (12 ขวด)</button><button class="btn" data-act="seed">ใส่ตัวอย่าง 6 ขวดให้ลอง</button></div></div>';
+  var q=S.q.trim().toLowerCase();
+  var rows=S.perfumes.filter(function(p){
+    if(S.filter!=='all'&&(p.families||[]).indexOf(S.filter)<0)return false;
+    return !q||((p.name||'')+' '+(p.brand||'')+' '+(p.notes||'')).toLowerCase().indexOf(q)>=0;
+  });
+  rows.sort(function(a,b){
+    if(S.sort==='rating')return (b.rating||0)-(a.rating||0)||(a.name||'').localeCompare(b.name||'');
+    if(S.sort==='low')return (a.remaining||0)-(b.remaining||0);
+    if(S.sort==='new')return (b.added||0)-(a.added||0);
+    return (a.name||'').localeCompare(b.name||'');
+  });
+  var ml=S.perfumes.reduce(function(s,p){return s+(p.size||0)*(p.remaining||0)/100},0);
+  var head='<p class="stat"><span class="mono">'+rows.length+'</span> จาก <span class="mono">'+S.perfumes.length+'</span> ขวด · เหลือรวมประมาณ <span class="mono">'+Math.round(ml)+'</span> มล.</p>';
+  if(!rows.length)return head+'<div class="empty"><p>ไม่พบขวดที่ตรงกับตัวกรอง</p></div>';
+  return head+'<div class="grid">'+rows.map(function(p){
+    var cf=S.confirm===p.id;
+    return '<article class="card"><div class="row1">'+bottle(p)+'<div style="min-width:0"><h3>'+esc(p.name)+(p.sample?' <span class="tag ex">ตัวอย่าง</span>':'')+'</h3><p class="brand">'+esc(p.brand||'ไม่ระบุแบรนด์')+' · '+esc(p.conc||'')+' · <span class="mono">'+(p.size||0)+' มล.</span></p></div></div>'
+     +'<div class="fams">'+famTags(p)+'</div>'
+     +(p.notes?'<p class="note">'+esc(p.notes)+'</p>':'')
+     +(p.fg>0?'<a class="fg" href="'+esc(p.fgUrl||('https://www.fragrantica.com/search/?query='+encodeURIComponent(((p.brand||'')+' '+(p.name||'')).trim())))+'" target="_blank" rel="noopener">Fragrantica <span class="mono">'+(+p.fg).toFixed(2)+'/5</span></a>':'')
+     +'<div class="meta"><span>แรง '+dots(p.strength||3)+'</span>'+stars(p.rating)+'<span class="mono">เหลือ '+Math.round(p.remaining||0)+'%</span></div>'
+     +'<div class="acts"><button class="btn sm" data-act="edit" data-id="'+p.id+'">แก้ไข</button>'
+     +(cf?'<button class="btn sm danger" data-act="del" data-id="'+p.id+'">ยืนยันลบ</button><button class="btn sm" data-act="nodel">ยกเลิก</button>':'<button class="btn sm" data-act="askdel" data-id="'+p.id+'">ลบ</button>')+'</div></article>';
+  }).join('')+'</div>';
+}
+function collHTML(){
+  return '<div class="coll"><div class="toolbar">'
+   +'<div class="field"><label for="q">ค้นหา</label><input type="text" id="q" data-in="q" placeholder="ชื่อ แบรนด์ หรือโน้ตกลิ่น" value="'+esc(S.q)+'"></div>'
+   +'<div class="field"><label for="sort">เรียงตาม</label><select id="sort" data-in="sort">'
+   +[['name','ชื่อ'],['rating','คะแนนที่ให้'],['low','เหลือน้อยสุด'],['new','เพิ่มล่าสุด']].map(function(o){return '<option value="'+o[0]+'"'+(S.sort===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'
+   +'<button class="btn primary add" data-act="add">เพิ่มน้ำหอม</button></div>'
+   +importBar()
+   +'<div class="chips" role="group" aria-label="กรองกลุ่มกลิ่น"><button class="chip" data-act="filter" data-k="all" aria-pressed="'+(S.filter==='all')+'">ทั้งหมด</button>'
+   +KEYS.map(function(k){return '<button class="chip" data-act="filter" data-k="'+k+'" aria-pressed="'+(S.filter===k)+'">'+FAM[k]+'</button>'}).join('')+'</div>'
+   +'<div id="list">'+listHTML()+'</div></div>';
+}
+function render(){
+  $('#app').innerHTML=S.tab==='today'?todayHTML():collHTML();
+  $('#tab-today').setAttribute('aria-selected',S.tab==='today');
+  $('#tab-coll').setAttribute('aria-selected',S.tab==='coll');
+  $('#wxsrc').textContent=S.tab==='today'?'พยากรณ์'+SNAP.place+' ณ '+SNAP.at:'';
+}
+function renderResults(){var r=$('#results');if(r)r.innerHTML=resultsHTML()}
+function renderList(){var r=$('#list');if(r)r.innerHTML=listHTML()}
+
+/* ---------- editor ---------- */
+function sheetHTML(p){
+  var isNew=!p.id,d=p;
+  var famChips=KEYS.map(function(k){return '<label class="chip"><input type="checkbox" name="fam" value="'+k+'"'+((d.families||[]).indexOf(k)>=0?' checked':'')+'>'+FAM[k]+'</label>'}).join('');
+  var occChips=Object.keys(OCC).map(function(k){return '<label class="chip"><input type="checkbox" name="occ" value="'+k+'"'+((d.occasions||[]).indexOf(k)>=0?' checked':'')+'>'+OCC[k].th+'</label>'}).join('');
+  var strR=[1,2,3,4,5].map(function(i){return '<label class="chip"><input type="radio" name="strength" value="'+i+'"'+((d.strength||3)===i?' checked':'')+'>'+i+' '+STR[i]+'</label>'}).join('');
+  var ratR=[1,2,3,4,5].map(function(i){return '<label class="chip"><input type="radio" name="rating" value="'+i+'"'+((d.rating||3)===i?' checked':'')+'>'+'★'.repeat(i)+'</label>'}).join('');
+  return '<form id="pform" novalidate aria-labelledby="sh-t"><h2 id="sh-t">'+(isNew?'เพิ่มน้ำหอมเข้าตู้':'แก้ไขน้ำหอม')+'</h2>'
+   +'<div class="two"><div class="field"><label for="f-name">ชื่อน้ำหอม</label><input type="text" id="f-name" name="name" required value="'+esc(d.name)+'"></div>'
+   +'<div class="field"><label for="f-brand">แบรนด์</label><input type="text" id="f-brand" name="brand" value="'+esc(d.brand)+'"></div></div>'
+   +'<div class="three"><div class="field"><label for="f-conc">ความเข้มข้น</label><select id="f-conc" name="conc">'+CONC.map(function(c){return '<option'+((d.conc||'EDP')===c?' selected':'')+'>'+c+'</option>'}).join('')+'</select></div>'
+   +'<div class="field"><label for="f-size">ขนาดขวด (มล.)</label><input type="number" id="f-size" name="size" min="1" max="1000" value="'+(d.size||50)+'"></div>'
+   +'<div class="field"><label for="f-rem">คงเหลือ <span class="rem-out" id="rem-o">'+(d.remaining==null?100:Math.round(d.remaining))+'%</span></label><input type="range" id="f-rem" name="remaining" min="0" max="100" step="5" value="'+(d.remaining==null?100:d.remaining)+'" data-in="rem"></div></div>'
+   +'<div class="field"><span class="lbl">กลุ่มกลิ่น (เลือกได้หลายอย่าง กลุ่มแรกที่เลือกกำหนดสีน้ำหอมในขวด)</span><div class="chips">'+famChips+'</div></div>'
+   +'<div class="field"><span class="lbl">ความแรงของกลิ่น</span><div class="chips">'+strR+'</div></div>'
+   +'<div class="field"><span class="lbl">ใช้ได้ดีในโอกาส (ไม่บังคับ)</span><div class="chips">'+occChips+'</div></div>'
+   +'<div class="field"><span class="lbl">คะแนนที่คุณให้</span><div class="chips">'+ratR+'</div></div>'
+   +'<div class="field"><label for="f-fg">คะแนนจาก Fragrantica (0–5 ไม่บังคับ)</label><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input type="number" id="f-fg" name="fg" min="0" max="5" step="0.01" placeholder="เช่น 4.12" value="'+(d.fg||'')+'" style="max-width:140px"><a class="fg" id="fg-link" data-act="fglink" href="https://www.fragrantica.com/search/?query='+encodeURIComponent(((d.brand||'')+' '+(d.name||'')).trim())+'" target="_blank" rel="noopener">ค้นหาบน Fragrantica</a></div><p class="note">หน้านี้ดึงคะแนนจากเว็บอื่นอัตโนมัติไม่ได้ เปิดลิงก์ดูคะแนนแล้วกรอกที่นี่ ระบบจะนำไปคิดคะแนนแนะนำด้วย</p></div>'
+   +'<div class="field"><label for="f-notes">โน้ตกลิ่น / บันทึก</label><textarea id="f-notes" name="notes" placeholder="เช่น ยูซุ ใบเขียว ซีดาร์">'+esc(d.notes)+'</textarea></div>'
+   +'<p class="note" id="f-err" role="alert" style="color:var(--bad)" hidden></p>'
+   +'<div class="foot"><button type="button" class="btn" data-act="close">ยกเลิก</button><button type="submit" class="btn primary">'+(isNew?'เพิ่มเข้าตู้':'บันทึก')+'</button></div></form>';
+}
+function openSheet(p){S.editing=p;var s=$('#sheet');s.innerHTML=sheetHTML(p);s.hidden=false;var n=$('#f-name');if(n)n.focus()}
+function closeSheet(){S.editing=null;$('#sheet').hidden=true;$('#sheet').innerHTML=''}
+
+async function submitForm(form){
+  var fd=new FormData(form),name=String(fd.get('name')||'').trim(),err=$('#f-err');
+  var fams=fd.getAll('fam');
+  if(!name){err.textContent='ใส่ชื่อน้ำหอมก่อน';err.hidden=false;$('#f-name').focus();return}
+  if(!fams.length){err.textContent='เลือกกลุ่มกลิ่นอย่างน้อย 1 อย่าง';err.hidden=false;return}
+  var old=S.editing||{};
+  var p={id:old.id||uid(),name:name,brand:String(fd.get('brand')||'').trim(),conc:fd.get('conc'),size:clamp(+fd.get('size')||50,1,1000),
+    remaining:clamp(+fd.get('remaining'),0,100),families:fams,strength:+fd.get('strength')||3,occasions:fd.getAll('occ'),
+    rating:+fd.get('rating')||3,fg:(function(v){v=parseFloat(v);return isNaN(v)?0:clamp(v,0,5)})(fd.get('fg')),notes:String(fd.get('notes')||'').trim(),added:old.added||Date.now()};
+  if(old.sample)p.sample=true;
+  if(old.fgUrl)p.fgUrl=old.fgUrl;if(old.src)p.src=old.src;
+  var ok=await savePerfume(p);
+  if(ok){closeSheet();render()}
+}
+
+async function seed(){
+  var base=[
+   ['Yuzu Morning','ตัวอย่าง','EDT',100,80,['fresh','green'],2,['office','cafe','outdoor'],4,'ยูซุ ใบมะนาว ชาเขียว'],
+   ['Rain Linen','ตัวอย่าง','EDT',50,60,['aquatic','musk'],2,['office','home'],4,'ผ้าลินินตากแห้ง น้ำฝน มัสก์ขาว'],
+   ['White Peony','ตัวอย่าง','EDP',50,90,['floral','musk'],3,['formal','cafe'],5,'โบตั๋นขาว แป้งอ่อน'],
+   ['Cedar Tea','ตัวอย่าง','EDP',75,40,['woody','green'],3,['meeting','office'],3,'ซีดาร์ ชาดำ หญ้าแห้ง'],
+   ['Night Oud','ตัวอย่าง','Parfum',50,70,['amber','woody','leather'],5,['date','party'],5,'อู๊ด แอมเบอร์ หนังฟอก'],
+   ['Vanilla Smoke','ตัวอย่าง','EDP',100,25,['gourmand','amber'],4,['date','home'],4,'วานิลลา ควันไม้ คาราเมล']
+  ];
+  for(var i=0;i<base.length;i++){var b=base[i];
+    await savePerfume({id:uid(),name:b[0],brand:b[1],conc:b[2],size:b[3],remaining:b[4],families:b[5],strength:b[6],occasions:b[7],rating:b[8],notes:b[9],added:Date.now()+i,sample:true});
+  }
+  render();
+}
+
+function packKey(b,n,c){return (b+'|'+n+'|'+c).toLowerCase()}
+function packPending(){var have={};S.perfumes.forEach(function(p){have[packKey(p.brand||'',p.name,p.conc||'')]=1});return PACK.filter(function(x){return !have[packKey(x[1],x[0],x[2])]})}
+async function importPack(){
+  var todo=packPending();
+  for(var i=0;i<todo.length;i++){var x=todo[i];
+    await savePerfume({id:uid(),name:x[0],brand:x[1],conc:x[2],size:x[3],remaining:x[4],families:x[5],strength:x[6],occasions:x[7],rating:3,fg:x[8],notes:x[9],fgUrl:x[10],src:'fragrantica',added:Date.now()+i});
+  }
+  render();
+}
+async function clearSamples(){
+  var del=S.perfumes.filter(function(p){return p.sample}).slice();
+  for(var i=0;i<del.length;i++)await deletePerfume(del[i].id);
+  render();
+}
+function importBar(){
+  var n=packPending().length,smp=S.perfumes.some(function(p){return p.sample});
+  if(!n&&!smp)return '';
+  return '<div class="chips">'+(n?'<button class="btn" data-act="importpack">นำเข้ารายการของฉัน ('+n+' ขวด) พร้อมข้อมูลจาก Fragrantica</button>':'')+(smp?'<button class="btn" data-act="clearsample">ลบน้ำหอมตัวอย่างทั้งหมด</button>':'')+'</div>';
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');if(!t)return;
+  var a=t.dataset.act,w=S.wx;
+  if(a==='tab'){S.tab=t.dataset.tab;S.confirm=null;render()}
+  else if(a==='occ'){S.occ=t.dataset.k;render()}
+  else if(a==='cond'){w.cond=t.dataset.k;render()}
+  else if(a==='place'){w.place=t.dataset.k;render()}
+  else if(a==='fc'){
+    var d=t.dataset.d;
+    if(d==='now'){w.temp=SNAP.temp;w.cond=SNAP.cond;if(SNAP.hum)w.hum=SNAP.hum;w.label='now'}
+    else{var x=SNAP.days.filter(function(y){return y.d===d})[0];if(x){w.temp=x.hi;w.label=d;w.cond=x.pop>=40?'rain':(w.cond==='rain'?'cloudy':w.cond)}}
+    render();
+  }
+  else if(a==='filter'){S.filter=t.dataset.k;render()}
+  else if(a==='fglink'){var nm=$('#f-name'),br=$('#f-brand');t.href='https://www.fragrantica.com/search/?query='+encodeURIComponent((((br&&br.value)||'')+' '+((nm&&nm.value)||'')).trim())}
+  else if(a==='add'){openSheet({})}
+  else if(a==='edit'){var p=S.perfumes.filter(function(x){return x.id===t.dataset.id})[0];if(p)openSheet(p)}
+  else if(a==='close'){closeSheet()}
+  else if(a==='askdel'){S.confirm=t.dataset.id;renderList()}
+  else if(a==='nodel'){S.confirm=null;renderList()}
+  else if(a==='del'){S.confirm=null;deletePerfume(t.dataset.id).then(function(){render()})}
+  else if(a==='importpack'){if(!S.busy){S.busy=true;t.disabled=true;t.textContent='กำลังนำเข้า...';importPack().then(function(){S.busy=false})}}
+  else if(a==='clearsample'){if(!S.busy){S.busy=true;t.disabled=true;clearSamples().then(function(){S.busy=false})}}
+  else if(a==='seed'){if(!S.busy){S.busy=true;seed().then(function(){S.busy=false})}}
+});
+document.addEventListener('input',function(e){
+  var t=e.target,k=t.dataset&&t.dataset.in;if(!k)return;
+  if(k==='temp'){S.wx.temp=+t.value;S.wx.label='custom';$('#temp-o').textContent=(+t.value).toFixed(1)+'°C';renderResults()}
+  else if(k==='hum'){S.wx.hum=+t.value;$('#hum-o').textContent=t.value+'%';renderResults()}
+  else if(k==='q'){S.q=t.value;renderList()}
+  else if(k==='rem'){$('#rem-o').textContent=t.value+'%'}
+});
+document.addEventListener('change',function(e){
+  var t=e.target,k=t.dataset&&t.dataset.in;
+  if(k==='part'){S.part=t.value;renderResults()}
+  else if(k==='city'){setCity(t.value)}
+  else if(k==='sort'){S.sort=t.value;renderList()}
+});
+document.addEventListener('submit',function(e){if(e.target.id==='pform'){e.preventDefault();submitForm(e.target)}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&S.editing)closeSheet()});
+$('#sheet').addEventListener('mousedown',function(e){if(e.target.id==='sheet')closeSheet()});
+
+var CITIES={'เชียงราย':[19.91,99.84],'เชียงใหม่':[18.79,98.98],'กรุงเทพฯ':[13.75,100.50],'ขอนแก่น':[16.44,102.83],'พัทยา':[12.93,100.88],'ภูเก็ต':[7.88,98.39],'หาดใหญ่':[7.01,100.47]};
+try{var sc=localStorage.getItem('scent-city');if(sc&&CITIES[sc])SNAP.place=sc}catch(e){}
+function cityHead(){return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><h2>อากาศ</h2><select id="city" data-in="city" aria-label="เมือง" style="width:auto">'+Object.keys(CITIES).map(function(c){return '<option'+(c===SNAP.place?' selected':'')+'>'+c+'</option>'}).join('')+'</select></div>'}
+function setCity(c){SNAP.place=c;try{localStorage.setItem('scent-city',c)}catch(e){}$('#dateline').textContent=dateLine();S.wx.label='now';loadWeather(true)}
+function dateLine(){return now0.toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'})+' · '+SNAP.place}
+function wcond(c){return c<=1?'clear':(c>=51&&!(c>=71&&c<=77))?'rain':'cloudy'}
+function loadWeather(force){
+  var xy=CITIES[SNAP.place]||CITIES['เชียงราย'];
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+xy[0]+'&longitude='+xy[1]+'&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,precipitation_probability_max&timezone=auto&forecast_days=8';
+  fetch(url).then(function(r){return r.json()}).then(function(j){
+    var c=j.current;SNAP.temp=c.temperature_2m;SNAP.hum=clamp(Math.round(c.relative_humidity_2m/5)*5,20,100);SNAP.cond=wcond(c.weather_code);
+    SNAP.days=j.daily.time.map(function(d,i){return {d:d,hi:j.daily.temperature_2m_max[i],pop:j.daily.precipitation_probability_max[i]||0}});
+    SNAP.at=new Date().toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    if(S.wx.label==='now'){S.wx.temp=SNAP.temp;S.wx.hum=SNAP.hum;S.wx.cond=SNAP.cond}
+    render();
+  }).catch(function(){if(force)toast('ดึงอากาศไม่ได้ ใช้ค่าที่ปรับเองแทน')});
+}
+$('#dateline').textContent=now0.toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'})+' · '+SNAP.place;
+setMode('pending');render();initStore();loadWeather();
+})();
+</script>
