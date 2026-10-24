@@ -140,6 +140,9 @@ ul.why li.neg::before{content:'−';color:var(--bad)}
 .acc{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .acc span{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
 .acc span.est{border-style:dashed;color:var(--warn);border-color:var(--warn)}
+.ocgs{display:flex;flex-direction:column;gap:12px}
+.ogrp{display:flex;flex-direction:column;gap:6px}
+.ogrp .gl{font-size:12px;color:var(--muted);letter-spacing:.04em}
 .assist{display:flex;flex-direction:column;gap:6px;padding:12px;border:1px dashed var(--line);border-radius:12px}
 .assist .btn{align-self:flex-start}
 .acc span.top{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--accent);font-weight:500}
@@ -153,7 +156,7 @@ a.fg{color:var(--accent);font-size:13px;text-decoration:underline;text-underline
 .empty p{max-width:44ch;color:var(--muted)}
 
 /* sheet */
-.sheet{position:fixed;inset:0;background:rgba(10,14,16,.55);display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;z-index:20;padding:20px 12px}
+.sheet{position:fixed;inset:0;background:rgba(10,14,16,.55);display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;z-index:20;padding:max(calc(env(safe-area-inset-top,0px) + 16px),28px) 12px calc(env(safe-area-inset-bottom,0px) + 20px)}
 .sheet[hidden]{display:none}
 .sheet form{background:var(--bg);border:1px solid var(--line);border-radius:18px;width:100%;max-width:560px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .sheet h2{font-size:20px}
@@ -221,8 +224,24 @@ var OCC={
   date:{th:'ออกเดต',s:[3,4],w:{amber:3,gourmand:2,spicy:2,woody:2,musk:2,floral:1,leather:1}},
   party:{th:'ปาร์ตี้/ออกงานกลางคืน',s:[4,5],w:{amber:2,spicy:2,gourmand:2,leather:2,woody:1,aquatic:-1,green:-1}},
   formal:{th:'งานแต่ง/พิธีการ',s:[2,4],w:{floral:3,woody:2,musk:2,amber:1,fresh:1,gourmand:-1,leather:-1,aquatic:-1}},
-  home:{th:'อยู่บ้าน/พักผ่อน',s:[1,3],w:{musk:3,gourmand:2,woody:1,floral:1,amber:1}}
+  home:{th:'อยู่บ้าน/พักผ่อน',s:[1,3],w:{musk:3,gourmand:2,woody:1,floral:1,amber:1}},
+  gym:{th:'ออกกำลังกายในฟิตเนส',s:[1,2],w:{fresh:3,aquatic:3,green:2,musk:1,floral:-1,woody:0,spicy:-2,leather:-2,amber:-3,gourmand:-3}},
+  commute:{th:'เดินทางในเมือง/รถไฟฟ้า',s:[1,3],w:{fresh:2,musk:2,green:1,aquatic:1,woody:0,amber:-2,gourmand:-2,leather:-2}},
+  uni:{th:'เรียน/มหาวิทยาลัย',s:[1,3],w:{fresh:2,green:2,aquatic:2,musk:2,floral:1,amber:-2,leather:-2,gourmand:-1}},
+  shopping:{th:'ช้อปปิ้ง/เดินห้าง',s:[2,3],w:{fresh:2,floral:2,musk:1,gourmand:1,green:1,woody:1,amber:-1}},
+  firstdate:{th:'เดตครั้งแรก',s:[2,3],w:{fresh:2,musk:2,woody:2,floral:1,green:1,leather:-1,amber:0,gourmand:0}},
+  dinner:{th:'ดินเนอร์/ร้านอาหารหรู',s:[3,4],w:{woody:2,amber:2,musk:2,floral:1,spicy:1,gourmand:1,leather:1,aquatic:-2}},
+  concert:{th:'คอนเสิร์ต/เฟสติวัล',s:[3,5],w:{fresh:2,aquatic:2,spicy:1,woody:1,leather:1,gourmand:-1}},
+  temple:{th:'ทำบุญ/ไปวัด',s:[1,2],w:{musk:3,fresh:2,floral:1,green:1,woody:1,spicy:-2,amber:-3,gourmand:-3,leather:-3}},
+  travel:{th:'เดินทางไกล/บนเครื่องบิน',s:[1,2],w:{musk:2,fresh:2,green:1,woody:1,spicy:-2,amber:-2,leather:-2,gourmand:-3}},
+  beach:{th:'ทะเล/วันหยุดชายหาด',s:[1,3],w:{aquatic:3,fresh:3,green:1,floral:1,woody:-1,spicy:-2,gourmand:-2,amber:-3,leather:-3}}
 };
+var OGROUPS=[
+  ['งานและเรียน',['office','meeting','uni']],
+  ['ชีวิตประจำวัน',['home','cafe','shopping','commute','gym']],
+  ['เดตและสังคม',['firstdate','date','dinner','party','concert']],
+  ['โอกาสพิเศษ',['formal','temple','travel','beach','outdoor']]
+];
 var CONC=['Cologne','EDT','EDP','Parfum','Body mist'];
 var STR=['','บางเบา','เบา','กลาง','ชัด','แรง'];
 var COND={clear:'ฟ้าใส',cloudy:'มีเมฆ',rain:'ฝนตก'};
@@ -364,6 +383,11 @@ function accHTML(p){var has=p.acc&&p.acc.length;if(!has&&!p.est)return '';return
 function famTags(p){return (p.families||[]).map(function(f){return '<span class="tag">'+FAM[f]+'</span>'}).join('')}
 function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 
+function occGroups(){
+  return OGROUPS.map(function(g){
+    return '<div class="ogrp"><span class="gl">'+g[0]+'</span><div class="chips">'+g[1].map(function(k){return '<button type="button" class="chip" data-act="occ" data-k="'+k+'" aria-pressed="'+(S.occ===k)+'">'+OCC[k].th+'</button>'}).join('')+'</div></div>';
+  }).join('');
+}
 function condPanel(){
   var w=S.wx,iso=localISO(new Date());
   var days=SNAP.days.filter(function(x){return x.d>=iso}).slice(0,7);
@@ -372,8 +396,8 @@ function condPanel(){
     return '<button type="button" data-act="fc" data-d="'+x.d+'" aria-pressed="'+(w.label===x.d)+'">'+lab+'<b>'+Math.round(x.hi)+'°</b>ฝน '+x.pop+'%</button>';
   }).join('');
   return '<section class="panel" aria-label="เงื่อนไข">'
-   +'<div class="field"><span class="lbl">วันนี้จะไปไหน / ทำอะไร</span><div class="chips" role="group" aria-label="โอกาส">'
-   +Object.keys(OCC).map(function(k){return '<button type="button" class="chip" data-act="occ" data-k="'+k+'" aria-pressed="'+(S.occ===k)+'">'+OCC[k].th+'</button>'}).join('')
+   +'<div class="field"><span class="lbl">วันนี้จะไปไหน / ทำอะไร</span><div class="ocgs" role="group" aria-label="โอกาส">'
+   +occGroups()
    +'</div></div>'
    +'<div>'+cityHead()+'<div style="display:flex;flex-direction:column;gap:14px">'
    +'<div class="slider-row"><div class="head"><label for="temp">อุณหภูมิ</label><output id="temp-o">'+w.temp.toFixed(1)+'°C</output></div><input type="range" id="temp" data-in="temp" min="10" max="42" step="0.5" value="'+w.temp+'"></div>'
@@ -552,7 +576,7 @@ async function aiFill(btn){
     +'{"known":true,"families":["woody","fresh"],"strength":3,"occasions":["office","date"],"accords":["Citrus","Woody"],"notes":"บน: ... · กลาง: ... · ฐาน: ..."}\n'
     +'families เลือก 1-4 ค่าจาก fresh,aquatic,green,floral,musk,woody,spicy,amber,gourmand,leather เรียงจากเด่นสุด\n'
     +'strength เป็นจำนวนเต็ม 1-5 (1 เบามาก 5 แรงมาก)\n'
-    +'occasions เลือกจาก office,meeting,cafe,outdoor,date,party,formal,home\n'
+    +'occasions เลือกจาก '+Object.keys(OCC).join(',')+'\n'
     +'accords คือชื่อ main accord ภาษาอังกฤษแบบที่ Fragrantica ใช้ เรียงจากเด่นไปน้อย สูงสุด 10 อัน\n'
     +'ถ้าคุณไม่รู้จักน้ำหอมนี้จริง ๆ ให้ตอบ {"known":false} ห้ามเดา';
   try{
