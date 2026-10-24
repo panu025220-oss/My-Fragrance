@@ -140,6 +140,12 @@ ul.why li.neg::before{content:'−';color:var(--bad)}
 .acc{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .acc span{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
 .acc span.est{border-style:dashed;color:var(--warn);border-color:var(--warn)}
+.suit{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.suit .row{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.suit .k{color:var(--muted);font-size:12px;min-width:4.6em}
+.oc{font-size:11px;padding:1px 8px;border-radius:99px;background:var(--surface2);color:var(--fg)}
+.oc.mine{background:var(--accent);color:var(--accent-fg)}
+.oc.no{background:transparent;border:1px solid var(--line);color:var(--bad)}
 .ocgs{display:flex;flex-direction:column;gap:12px}
 .ogrp{display:flex;flex-direction:column;gap:6px}
 .ogrp .gl{font-size:12px;color:var(--muted);letter-spacing:.04em}
@@ -380,6 +386,54 @@ function bottle(p){
 function dots(n){var s='';for(var i=1;i<=5;i++)s+='<i class="'+(i<=n?'on':'')+'"></i>';return '<span class="dots" title="ความแรง: '+STR[n]+'">'+s+'</span>'}
 function stars(n){n=n||3;return '<span class="stars" aria-label="ให้คะแนน '+n+' จาก 5">'+'★'.repeat(n)+'☆'.repeat(5-n)+'</span>'}
 function accHTML(p){var has=p.acc&&p.acc.length;if(!has&&!p.est)return '';return '<div class="acc" aria-label="Accords เรียงตามความเด่น">'+(has?p.acc.map(function(a,i){return '<span class="'+(i<3?'top':'')+'">'+esc(a)+'</span>'}).join(''):'')+(p.est?'<span class="est">ประมาณการโดย Claude ยังไม่ได้ตรวจกับ Fragrantica</span>':'')+'</div>'}
+function occScoreList(p){
+  var fams=p.families||[],st=p.strength||3;
+  var avg=function(f){return fams.length?fams.reduce(function(s,k){return s+f(k)},0)/fams.length:0};
+  return Object.keys(OCC).map(function(k){
+    var occ=OCC[k],v=avg(function(f){return occ.w[f]||0}),fit=0;
+    if(st<occ.s[0])fit=-(occ.s[0]-st)*1.2;else if(st>occ.s[1])fit=-(st-occ.s[1])*1.2;
+    return {k:k,v:v+fit,tag:(p.occasions||[]).indexOf(k)>=0};
+  });
+}
+function wxRange(p){
+  var fams=p.families||[],st=p.strength||3,w=[];
+  for(var b=0;b<5;b++){
+    var v=fams.length?fams.reduce(function(s,k){return s+WX[k][b]},0)/fams.length:0;
+    if(b<=1&&st>=4)v-=(st-3)*0.8;
+    if(b===4&&st<=1)v-=0.8;
+    w.push(v);
+  }
+  var best=Math.max.apply(null,w),lim=Math.max(1,best-1),idx=[];
+  w.forEach(function(v,i){if(v>=lim)idx.push(i)});
+  if(!idx.length)return 'ไม่เด่นเรื่องอากาศ';
+  var a=idx[0],z=idx[idx.length-1],UB=[null,33,29,24,18],LB=[33,29,24,18,null],hi=UB[a],lo=LB[z];
+  var name=BUCKET[a]+(a!==z?'–'+BUCKET[z]:'');
+  var t=hi==null&&lo==null?'ทุกอากาศ':hi==null?lo+'°C ขึ้นไป':lo==null?'ต่ำกว่า '+hi+'°C':lo+'–'+hi+'°C';
+  return name+' ('+t+')';
+}
+function dayNight(p){
+  var D=['fresh','aquatic','green','floral','musk'],N=['amber','gourmand','spicy','leather'],d=0,n=0;
+  (p.families||[]).forEach(function(f){if(D.indexOf(f)>=0)d++;if(N.indexOf(f)>=0)n++});
+  (p.occasions||[]).forEach(function(k){
+    if(['party','date','dinner','concert','firstdate'].indexOf(k)>=0)n++;
+    else if(['office','meeting','cafe','outdoor','uni','gym','shopping','commute','beach'].indexOf(k)>=0)d++;
+  });
+  if((p.strength||3)>=5)n+=1;
+  return d>=n+2?'กลางวัน':n>=d+2?'กลางคืน':'ได้ทั้งวันและคืน';
+}
+function suitHTML(p){
+  var L=occScoreList(p),mine=L.filter(function(x){return x.tag}).map(function(x){return x.k});
+  var auto=L.filter(function(x){return !x.tag&&x.v>=1.5}).sort(function(a,b){return b.v-a.v}).map(function(x){return x.k}).slice(0,Math.max(0,6-mine.length));
+  var avoid=L.filter(function(x){return !x.tag&&x.v<=-1.5}).sort(function(a,b){return a.v-b.v}).map(function(x){return x.k}).slice(0,3);
+  var chip=function(k,c){return '<span class="oc '+c+'">'+OCC[k].th+'</span>'};
+  var good=mine.map(function(k){return chip(k,'mine')}).concat(auto.map(function(k){return chip(k,'')})).join('');
+  return '<div class="suit">'
+    +(good?'<div class="row"><span class="k">เหมาะกับ</span>'+good+'</div>':'')
+    +(avoid.length?'<div class="row"><span class="k">ควรเลี่ยง</span>'+avoid.map(function(k){return chip(k,'no')}).join('')+'</div>':'')
+    +'<div class="row"><span class="k">อากาศ</span><span>'+wxRange(p)+'</span></div>'
+    +'<div class="row"><span class="k">ช่วงเวลา</span><span>'+dayNight(p)+'</span></div>'
+    +'<p class="note">สีเข้ม = ที่คุณติ๊กไว้ สีอ่อน = ระบบประมาณจากกลุ่มกลิ่นและความแรง</p></div>';
+}
 function famTags(p){return (p.families||[]).map(function(f){return '<span class="tag">'+FAM[f]+'</span>'}).join('')}
 function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 
@@ -448,7 +502,7 @@ function listHTML(){
   return head+'<div class="grid">'+rows.map(function(p){
     var cf=S.confirm===p.id;
     return '<article class="card"><div class="row1">'+bottle(p)+'<div style="min-width:0"><h3>'+esc(p.name)+(p.sample?' <span class="tag ex">ตัวอย่าง</span>':'')+'</h3><p class="brand">'+esc(p.brand||'ไม่ระบุแบรนด์')+' · '+esc(p.conc||'')+' · <span class="mono">'+(p.size||0)+' มล.</span></p></div></div>'
-     +'<div class="fams">'+famTags(p)+'</div>'+accHTML(p)
+     +'<div class="fams">'+famTags(p)+'</div>'+accHTML(p)+suitHTML(p)
      +(p.notes?'<p class="note">'+esc(p.notes)+'</p>':'')
      +(p.fg>0?'<a class="fg" href="'+esc(p.fgUrl||('https://www.fragrantica.com/search/?query='+encodeURIComponent(((p.brand||'')+' '+(p.name||'')).trim())))+'" target="_blank" rel="noopener">Fragrantica <span class="mono">'+(+p.fg).toFixed(2)+'/5</span></a>':'')
      +(p.sum?'<details class="sum"><summary>ความเห็นโดยรวมจากผู้ใช้ Fragrantica'+(p.fgv?' ('+p.fgv.toLocaleString('en-US')+' โหวต)':'')+'</summary><p><b>ข้อดี</b> '+esc(p.sum.p)+'</p><p><b>ข้อสังเกต</b> '+esc(p.sum.n)+'</p><p class="note">สรุปด้วยคำของเราเอง ไม่ใช่ข้อความต้นฉบับ</p></details>':'')
