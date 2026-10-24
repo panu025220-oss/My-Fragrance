@@ -482,7 +482,12 @@ function resultsHTML(){
 }
 function todayHTML(){return '<div class="today">'+condPanel()+'<section id="results" aria-live="polite">'+resultsHTML()+'</section></div>'}
 
-function listHTML(){
+function fgSearch(q){
+  q=String(q||'').trim();if(!q)return '';
+  return '<p class="note" style="margin-bottom:10px">ไม่เจอที่ต้องการ? <a class="fg" target="_blank" rel="noopener" href="https://www.fragrantica.com/search/?query='+encodeURIComponent(q)+'">ค้นหา "'+esc(q)+'" บน Fragrantica</a></p>';
+}
+function listHTML(){return fgSearch(S.q)+listCore()}
+function listCore(){
   if(!S.loaded)return '<div class="empty"><p>กำลังเปิดตู้...</p></div>';
   if(!S.perfumes.length)return '<div class="empty"><h2>ยังไม่มีน้ำหอมในตู้</h2><p>บันทึกชื่อ กลุ่มกลิ่น ความแรง และปริมาณที่เหลือ เพื่อให้ระบบแนะนำได้แม่นขึ้น</p><div class="chips" style="justify-content:center"><button class="btn primary" data-act="add">เพิ่มน้ำหอมขวดแรก</button><button class="btn" data-act="importpack">นำเข้ารายการของฉัน (12 ขวด)</button><button class="btn" data-act="seed">ใส่ตัวอย่าง 6 ขวดให้ลอง</button></div></div>';
   var q=S.q.trim().toLowerCase();
@@ -545,7 +550,7 @@ function sheetHTML(p){
   var strR=[1,2,3,4,5].map(function(i){return '<label class="chip"><input type="radio" name="strength" value="'+i+'"'+((d.strength||3)===i?' checked':'')+'>'+i+' '+STR[i]+'</label>'}).join('');
   var ratR=[1,2,3,4,5].map(function(i){return '<label class="chip"><input type="radio" name="rating" value="'+i+'"'+((d.rating||3)===i?' checked':'')+'>'+'★'.repeat(i)+'</label>'}).join('');
   return '<form id="pform" novalidate aria-labelledby="sh-t"><h2 id="sh-t">'+(isNew?'เพิ่มน้ำหอมเข้าตู้':'แก้ไขน้ำหอม')+'</h2>'
-   +'<div class="assist"><button type="button" class="btn sm" id="ai-btn" data-act="ai" hidden>ให้ Claude ช่วยเติมข้อมูล</button><p class="note" id="ai-note">เติมกลุ่มกลิ่น ความแรง โอกาส และ accord ให้โดยประมาณจากชื่อ (ไม่ใช่ข้อมูลตรงจาก Fragrantica)</p><p class="note">อยากได้ข้อมูลตรงจาก Fragrantica ส่งชื่อน้ำหอมให้ Claude ในแชท แล้วใช้ปุ่ม "นำเข้าข้อมูล (JSON)" ในหน้าคอลเลกชัน</p></div>'
+   +'<div class="assist"><button type="button" class="btn sm" id="ai-btn" data-act="ai" hidden>ให้ Claude ช่วยเติมข้อมูล</button><p class="note" id="ai-note">เติมกลุ่มกลิ่น ความแรง โอกาส และ accord ให้โดยประมาณจากชื่อ (ไม่ใช่ข้อมูลตรงจาก Fragrantica)</p><a class="fg" id="fg-top" data-act="fglink" target="_blank" rel="noopener" href="https://www.fragrantica.com/search/">เปิดหน้า Fragrantica ของขวดนี้ (กรอกชื่อและแบรนด์ก่อน)</a><p class="note">อยากได้ข้อมูลตรงจาก Fragrantica ส่งชื่อน้ำหอมให้ Claude ในแชท แล้วใช้ปุ่ม "นำเข้าข้อมูล (JSON)" ในหน้าคอลเลกชัน</p></div>'
    +'<div class="two"><div class="field"><label for="f-name">ชื่อน้ำหอม</label><input type="text" id="f-name" name="name" required value="'+esc(d.name)+'"></div>'
    +'<div class="field"><label for="f-brand">แบรนด์</label><input type="text" id="f-brand" name="brand" value="'+esc(d.brand)+'"></div></div>'
    +'<div class="three"><div class="field"><label for="f-conc">ความเข้มข้น</label><select id="f-conc" name="conc">'+CONC.map(function(c){return '<option'+((d.conc||'EDP')===c?' selected':'')+'>'+c+'</option>'}).join('')+'</select></div>'
